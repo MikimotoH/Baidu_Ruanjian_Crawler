@@ -70,7 +70,7 @@ def guessFileSize(txt:str)->int:
     """ txt='6.56 MB'
     """
     try:
-        m = re.search(r'(\d+\.?\d+)\s*(M|K)', txt, re.I)
+        m = re.search(r'(\d+\.?\d*)\s*(M|K)', txt, re.I)
         if not m:
             ulog('error txt="%s"'%txt)
             return 0
@@ -178,7 +178,7 @@ def main():
             "appname TEXT,"
             "file_url TEXT,"
             "desc TEXT,"
-            "file_date TEXT,"
+            "file_date DATE,"
             "file_size INTEGER,"
             "page_url TEXT,"
             "tree_trail TEXT,"
