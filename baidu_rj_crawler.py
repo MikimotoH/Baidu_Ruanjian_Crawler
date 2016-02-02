@@ -67,14 +67,14 @@ def guessDate(txt:str)->datetime:
         print('txt=',txt)
 
 def guessFileSize(txt:str)->int:
-    """ txt='6.56 MB'
+    """ txt='7M'
     """
     try:
-        m = re.search(r'(\d+\.?\d*)\s*(M|K)', txt, re.I)
+        m = re.search(r'(\d+\.?\d*)\s*(M|K|G)', txt, re.I)
         if not m:
             ulog('error txt="%s"'%txt)
             return 0
-        unitDic=dict(M=1024**2,K=1024)
+        unitDic=dict(M=1024**2,K=1024,G=1024**3)
         unitTxt = m.group(2).upper()
         return int(float(m.group(1)) * unitDic[unitTxt] )
     except Exception as ex:
@@ -183,6 +183,7 @@ def main():
             "page_url TEXT,"
             "tree_trail TEXT,"
             "file_sha1 TEXT,"
+            "has_uploaded INTEGER,"
             "PRIMARY KEY (file_url)"
             "UNIQUE(file_url)"
             ");")
