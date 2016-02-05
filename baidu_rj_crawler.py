@@ -184,6 +184,7 @@ def main():
             "tree_trail TEXT,"
             "file_sha1 TEXT,"
             "has_uploaded INTEGER,"
+            "baidu_download_count INTEGER,"
             "PRIMARY KEY (file_url)"
             "UNIQUE(file_url)"
             ");")
