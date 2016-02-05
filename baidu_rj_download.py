@@ -25,12 +25,15 @@ def main():
         for row in rows:
             appname,file_url,tree_trail, file_size, has_uploaded = row
             tree_trail = [int(_) for _ in re.findall('\d+', tree_trail) ]
-            if tree_trail[0] == 2: # is Game
-                uprint('"%s" is a Game: %s'%(appname,tree_trail))
+            #if tree_trail[0] == 2: # is Game
+            #    uprint('"%s" is a Game: %s'%(appname,tree_trail))
+            #    continue
+            if tree_trail[1] >= 20:
+                uprint('"%s" bypass becasue it is not ranked in first 20 pages: %s'%(appname,tree_trail))
                 continue
-            if file_size > 200*1024*1024: # too big
-                uprint('file_size=%d is too big'%file_size)
-                continue
+            # if file_size > 200*1024*1024: # too big
+            #    uprint('"%s" file_size=%d is too big'%(appname,file_size))
+            #    continue
             if has_uploaded == 1:
                 uprint('has_uploaded=%d'%has_uploaded)
                 continue
