@@ -29,13 +29,13 @@ def main():
             #    uprint('"%s" is a Game: %s'%(appname,tree_trail))
             #    continue
             if tree_trail[1] >= 20:
-                uprint('"%s" bypass becasue it is not ranked in first 20 pages: %s'%(appname,tree_trail))
+                # uprint('"%s" bypass becasue it is not ranked in first 20 pages: %s'%(appname,tree_trail))
                 continue
             # if file_size > 200*1024*1024: # too big
             #    uprint('"%s" file_size=%d is too big'%(appname,file_size))
             #    continue
             if has_uploaded == 1:
-                uprint('has_uploaded=%d'%has_uploaded)
+                # uprint('has_uploaded=%d'%has_uploaded)
                 continue
             local_file = urlFileName(file_url)
             uprint('"%s", %s, %s\n%s'%(appname, tree_trail, local_file, 
@@ -48,6 +48,13 @@ def main():
                 # HTTP Error 404: Not Found
                 print(ex)
                 continue
+            except urllib.error.URLError as ex:
+                print(ex)
+                continue
+            except Exception as ex:
+                # pdb.set_trace()
+                traceback.print_exc()
+                continue
 
             file_sha1 = getFileSha1(local_file)
             file_size = path.getsize(local_file)
@@ -55,10 +62,15 @@ def main():
                 "UPDATE TFiles SET file_sha1=:file_sha1,file_size=:file_size"
                 " WHERE file_url = :file_url", locals())
             conn.commit()
-            ftp = ftputil.FTPHost(ftpHostName,ftpUserName,ftpPassword)
-            uprint('upload to GRID')
-            ftp.upload(local_file, path.basename(local_file))
-            ftp.close()
+            while True:
+                uprint('upload to GRID')
+                try:
+                    with  ftputil.FTPHost(ftpHostName,ftpUserName,ftpPassword, timeout=30) as ftp:
+                        ftp.upload(local_file, path.basename(local_file))
+                        #ftp.close()
+                        break
+                except ftputil.error.FTPIOError as ex:
+                    print(ex)
             csr.execute(
                 "UPDATE TFiles SET has_uploaded=1"
                 " WHERE file_url=:file_url", locals())
