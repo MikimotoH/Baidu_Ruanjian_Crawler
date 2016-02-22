@@ -3,8 +3,7 @@
 import sqlite3
 import pdb
 import traceback
-import sys
-from ftp_credentials import ftpHostName,ftpUserName,ftpPassword
+from ftp_credentials import ftpHostName, ftpUserName, ftpPassword
 import ftputil
 from os import path
 import os
@@ -16,14 +15,14 @@ import urllib
 
 def main():
     try:
-        conn= sqlite3.connect('baidu_rj.sqlite3')
-        csr=conn.cursor()
+        conn = sqlite3.connect('baidu_rj.sqlite3')
+        csr = conn.cursor()
         rows = csr.execute(
             "SELECT appname,file_url,tree_trail, file_size, has_uploaded"
             " FROM TFiles "
             " where file_sha1 is NULL or LENGTH(file_sha1)=0").fetchall()
         for row in rows:
-            appname,file_url,tree_trail, file_size, has_uploaded = row
+            appname, file_url, tree_trail, file_size, has_uploaded = row
             tree_trail = [int(_) for _ in re.findall('\d+', tree_trail) ]
             #if tree_trail[0] == 2: # is Game
             #    uprint('"%s" is a Game: %s'%(appname,tree_trail))
@@ -38,7 +37,7 @@ def main():
                 # uprint('has_uploaded=%d'%has_uploaded)
                 continue
             local_file = urlFileName(file_url)
-            uprint('"%s", %s, %s\n%s'%(appname, tree_trail, local_file, 
+            uprint('"%s", %s, %s\n%s'%(appname, tree_trail, local_file,
                 file_url))
             try:
                 downloadFile(file_url, local_file)
@@ -71,6 +70,11 @@ def main():
                         break
                 except ftputil.error.FTPIOError as ex:
                     print(ex)
+                except ftputil.error.FTPOSError as ex:
+                    print(ex)
+                except Exception as ex:
+                    traceback.print_exc()
+                    pdb.set_trace()
             csr.execute(
                 "UPDATE TFiles SET has_uploaded=1"
                 " WHERE file_url=:file_url", locals())
